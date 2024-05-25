@@ -6,16 +6,8 @@ from langchain_community.chat_models import ChatPremAI
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 from langchain_community.embeddings import PremAIEmbeddings
-from dotenv import load_dotenv
 
-# Carica le variabili d'ambiente da un file .env
-load_dotenv()
-
-# Ottieni la chiave API da un file .env
-PREMAI_API_KEY = os.getenv("PREMAI_API_KEY")
-
-# Imposta la chiave API come variabile d'ambiente
-os.environ["PREMAI_API_KEY"] = PREMAI_API_KEY
+os.environ["PREMAI_API_KEY"] == st.secrets["PREMAI_API_KEY"]
 
 # Carica i chunk e le embeddings dal file pickle
 with open('chunk_embeddings.pkl', 'rb') as f:

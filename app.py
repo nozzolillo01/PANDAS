@@ -1,39 +1,35 @@
-import streamlit as st
-import os
-import pickle
-from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_community.chat_models import ChatPremAI
-from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
-from langchain_community.embeddings import PremAIEmbeddings
-from dotenv import load_dotenv
-
-# Carica le variabili d'ambiente da un file .env
-load_dotenv()
-
-# Ottieni la chiave API da un file .env
-PREMAI_API_KEY = os.getenv("PREMAI_API_KEY")
+import streamlit as st  # Importa la libreria Streamlit per creare l'interfaccia web
+import os  # Importa la libreria os per le operazioni di sistema
+import pickle  # Importa la libreria pickle per la serializzazione degli oggetti
+from langchain_core.messages import HumanMessage, SystemMessage  # Importa le classi di messaggi di LangChain
+from langchain_community.chat_models import ChatPremAI  # Importa il modello di chat PremAI di LangChain
+from sklearn.metrics.pairwise import cosine_similarity  # Importa la funzione per calcolare la similarità coseno
+import numpy as np  # Importa la libreria numpy per le operazioni numeriche
+from langchain_community.embeddings import PremAIEmbeddings  # Importa l'embedder di PremAI di LangChain
+from config import PREMAI_API_KEY  # Importa la chiave API dal file di configurazione
+import create_embeddings  # Importa il modulo per creare embeddings (anche se non viene utilizzato direttamente qui)
 
 # Imposta la chiave API come variabile d'ambiente
 os.environ["PREMAI_API_KEY"] = PREMAI_API_KEY
 
 # Carica i chunk e le embeddings dal file pickle
 with open('chunk_embeddings.pkl', 'rb') as f:
-    all_chunks, chunk_embeddings = pickle.load(f)
+    all_chunks, chunk_embeddings = pickle.load(f)  # Deserializza i chunk di testo e le loro embeddings
 
 # Inizializza l'embedder
 model = "text-embedding-3-large"
-embedder = PremAIEmbeddings(project_id=4316, model=model)
+embedder = PremAIEmbeddings(project_id=4316, model=model)  # Crea un oggetto embedder con il modello specificato
 
 # Funzione per trovare i chunk più simili alla query
 def find_most_similar_chunks(query_embedding, chunk_embeddings, all_chunks, top_k=10):
-    similarities = cosine_similarity([query_embedding], chunk_embeddings).flatten()
-    most_similar_indices = similarities.argsort()[-top_k:][::-1]
-    return [(all_chunks[i], similarities[i]) for i in most_similar_indices]
+    similarities = cosine_similarity([query_embedding], chunk_embeddings).flatten()  # Calcola la similarità coseno tra la query e i chunk
+    most_similar_indices = similarities.argsort()[-top_k:][::-1]  # Ordina gli indici dei chunk per similarità in ordine decrescente
+    return [(all_chunks[i], similarities[i]) for i in most_similar_indices]  # Restituisce i top_k chunk più simili con i loro punteggi
 
 # Streamlit app
-st.set_page_config(page_title="Chatbot Pandas 🐼✨", page_icon="✨")
+st.set_page_config(page_title="Chatbot Pandas 🐼✨", page_icon="✨")  # Configura il titolo e l'icona della pagina Streamlit
 
+# Definisce lo stile della pagina
 st.markdown("""
 <style>
     .stApp {
@@ -63,43 +59,37 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Aggiunge il titolo e il sottotitolo dell'app
 st.markdown('<div class="header-text">Benvenuto nel Chatbot Pandas 🐼✨</div>', unsafe_allow_html=True)
 st.markdown('<div class="subheader-text">Fai una domanda e il chatbot ti risponderà!</div>', unsafe_allow_html=True)
 
 # Inizializza la lista dei messaggi nella sessione di Streamlit
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = []  # Se non esiste, crea una lista vuota per i messaggi
 
 # Input di testo per la query dell'utente
-user_query = st.text_input(" ", key="user_input", help="Scrivi qui la tua domanda e premi Invio per ricevere una risposta.")
+user_query = st.text_input("Inserisci la tua domanda:", key="user_input", help="Scrivi qui la tua domanda", label_visibility="collapsed")
 
-if user_query:
-    with st.spinner('mhhh... fammi pensare un attimo..'):
-        # Embed della query utente
-        query_embedding = embedder.embed_query(user_query)
+if user_query:  # Se l'utente ha inserito una query
+    with st.spinner('mhhh... fammi pensare un attimo..'):  # Mostra uno spinner di caricamento
+        query_embedding = embedder.embed_query(user_query)  # Crea l'embedding della query dell'utente
 
-        # Trova i chunk più simili
-        most_similar_chunks = find_most_similar_chunks(query_embedding, chunk_embeddings, all_chunks)
+        most_similar_chunks = find_most_similar_chunks(query_embedding, chunk_embeddings, all_chunks)  # Trova i chunk più simili
 
-        # Combina i chunk più simili per generare una risposta
-        combined_text = " ".join([chunk for chunk, _ in most_similar_chunks])
+        combined_text = " ".join([chunk for chunk, _ in most_similar_chunks])  # Combina i chunk più simili in un testo unico
 
-        # Genera una risposta utilizzando i chunk più rilevanti
-        chat = ChatPremAI(project_id=4316)
-        system_message = SystemMessage(content=combined_text)
-        human_message = HumanMessage(content=user_query)
-        response = chat.invoke([system_message, human_message])
+        chat = ChatPremAI(project_id=4316)  # Inizializza il modello di chat
+        system_message = SystemMessage(content=combined_text)  # Crea un messaggio di sistema con il testo combinato
+        human_message = HumanMessage(content=user_query)  # Crea un messaggio umano con la query dell'utente
+        response = chat.invoke([system_message, human_message])  # Genera una risposta usando il modello di chat
 
-        # Aggiungi la query e la risposta alla lista dei messaggi
-        st.session_state.messages.append({"role": "user", "content": user_query})
-        st.session_state.messages.append({"role": "bot", "content": response.content})
+        st.session_state.messages.append({"role": "user", "content": user_query})  # Aggiunge la query dell'utente ai messaggi
+        st.session_state.messages.append({"role": "bot", "content": response.content})  # Aggiunge la risposta del bot ai messaggi
 
 # Visualizza i messaggi come una chat in ordine inverso
 for message in reversed(st.session_state.messages):
     if message["role"] == "user":
-        st.markdown(f'<div class="response-box" style="background-color: #1E1E1E; color: #FFFFFF;">{message["content"]}</div>', unsafe_allow_html=True)
-        st.markdown('<div style="margin-bottom: 1rem;"></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="response-box" style="background-color: #1E1E1E; color: #FFFFFF;">{message["content"]}</div>', unsafe_allow_html=True)  # Messaggio dell'utente
+        st.markdown('<div style="margin-bottom: 1rem;"></div>', unsafe_allow_html=True)  # Spazio tra i messaggi
     else:
-        st.markdown(f'<div class="response-box">{message["content"]}</div>', unsafe_allow_html=True)
-        
-    
+        st.markdown(f'<div class="response-box">{message["content"]}</div>', unsafe_allow_html=True)  # Messaggio del bot

@@ -7,7 +7,6 @@ from sklearn.metrics.pairwise import cosine_similarity  # Importa la funzione pe
 import numpy as np  # Importa la libreria numpy per le operazioni numeriche
 from langchain_community.embeddings import PremAIEmbeddings  # Importa l'embedder di PremAI di LangChain
 from config import PREMAI_API_KEY  # Importa la chiave API dal file di configurazione
-import create_embeddings  # Importa il modulo per creare embeddings (anche se non viene utilizzato direttamente qui)
 
 # Imposta la chiave API come variabile d'ambiente
 os.environ["PREMAI_API_KEY"] = PREMAI_API_KEY

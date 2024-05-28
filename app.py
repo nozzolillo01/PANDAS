@@ -17,7 +17,7 @@ with open('chunk_embeddings.pkl', 'rb') as f:
 
 # Inizializza l'embedder
 model = "text-embedding-3-large"
-embedder = PremAIEmbeddings(project_id=4316, model=model)  # Crea un oggetto embedder con il modello specificato
+embedder = PremAIEmbeddings(project_id=4494, model=model)  # Crea un oggetto embedder con il modello specificato
 
 # Funzione per trovare i chunk più simili alla query
 def find_most_similar_chunks(query_embedding, chunk_embeddings, all_chunks, top_k=10):
@@ -77,7 +77,7 @@ if user_query:  # Se l'utente ha inserito una query
 
         combined_text = " ".join([chunk for chunk, _ in most_similar_chunks])  # Combina i chunk più simili in un testo unico
 
-        chat = ChatPremAI(project_id=4316)  # Inizializza il modello di chat
+        chat = ChatPremAI(project_id=4494)  # Inizializza il modello di chat
         system_message = SystemMessage(content=combined_text)  # Crea un messaggio di sistema con il testo combinato
         human_message = HumanMessage(content=user_query)  # Crea un messaggio umano con la query dell'utente
         response = chat.invoke([system_message, human_message])  # Genera una risposta usando il modello di chat

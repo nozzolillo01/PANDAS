@@ -1,0 +1,1 @@
+PREMAI_API_KEY = "pOp5mjPSQ0Lkto1NIu51yYwjGb3atcDYV2" # chiave 

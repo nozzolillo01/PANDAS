@@ -26,7 +26,7 @@ def find_most_similar_chunks(query_embedding, chunk_embeddings, all_chunks, top_
     return [(all_chunks[i], similarities[i]) for i in most_similar_indices]  # Restituisce i top_k chunk più simili con i loro punteggi
 
 # Streamlit app
-st.set_page_config(page_title="Chatbot Pandas 🐼✨", page_icon="✨")  # Configura il titolo e l'icona della pagina Streamlit
+st.set_page_config(page_title="Chatbot camera dei deputati 📚", page_icon="✨")  # Configura il titolo e l'icona della pagina Streamlit
 
 # Definisce lo stile della pagina
 st.markdown("""
@@ -59,7 +59,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Aggiunge il titolo e il sottotitolo dell'app
-st.markdown('<div class="header-text">Benvenuto nel Chatbot Pandas 🐼✨</div>', unsafe_allow_html=True)
+st.markdown('<div class="header-text">Benvenuto nel Chatbot Camera dei deputati </div>', unsafe_allow_html=True)
 st.markdown('<div class="subheader-text">Fai una domanda e il chatbot ti risponderà!</div>', unsafe_allow_html=True)
 
 # Inizializza la lista dei messaggi nella sessione di Streamlit

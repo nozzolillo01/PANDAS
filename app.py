@@ -70,7 +70,7 @@ if "messages" not in st.session_state:
 user_query = st.text_input("Inserisci la tua domanda:", key="user_input", help="Scrivi qui la tua domanda", label_visibility="collapsed")
 
 if user_query:  # Se l'utente ha inserito una query
-    with st.spinner('mhhh... fammi pensare un attimo..'):  # Mostra uno spinner di caricamento
+    with st.spinner(''):  # Mostra uno spinner di caricamento
         query_embedding = embedder.embed_query(user_query)  # Crea l'embedding della query dell'utente
 
         most_similar_chunks = find_most_similar_chunks(query_embedding, chunk_embeddings, all_chunks)  # Trova i chunk più simili

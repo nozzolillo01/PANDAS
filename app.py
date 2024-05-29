@@ -59,7 +59,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Aggiunge il titolo e il sottotitolo dell'app
-st.markdown('<div class="header-text">Benvenuto nel Chatbot Camera dei deputati </div>', unsafe_allow_html=True)
+st.markdown('<div class="header-text">Chatbot Camera dei deputati </div>', unsafe_allow_html=True)
 st.markdown('<div class="subheader-text">Fai una domanda e il chatbot ti risponderà!</div>', unsafe_allow_html=True)
 
 # Inizializza la lista dei messaggi nella sessione di Streamlit
